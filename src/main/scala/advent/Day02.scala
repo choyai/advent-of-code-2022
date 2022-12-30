@@ -7,14 +7,17 @@ import scala.util.Try
 
 object Day02 {
 
-  enum Move:
-    case Rock, Paper, Scissors
+  enum Move(score: Int):
+    def getScore: Int = score;
+    case Rock extends Move(1)
+    case Paper extends Move(2)
+    case Scissors extends Move(3)
 
 
   def solve: ZIO[Console, Throwable, String] =
     for {
       // read the input data from a file
-      input <- readInputFile("day02_input.txt")
+      input <- readInputFile("src/main/resources/day02_input.txt")
       // parse the input data
       parsedInput = parseInput(input)
       // solve the first part of the problem
@@ -31,7 +34,37 @@ object Day02 {
   def parseInput(input: String): Seq[Int] =
     // parse the input string and return a sequence of integers
     // for day 2 this is the score for each round
-    input.split("\n").map(_.toInt)
+    input
+      .split("\n")
+      .map(_.toInt)
+
+  def calcPoints(input: String): Int =
+    val moves = input.split(" ")
+    val oppMove: Move = moves.head.match {
+      case "A" => Move.Rock
+      case "B" => Move.Paper
+      case "C" => Move.Scissors
+    }
+    val myMove: Move = moves.last.match {
+      case "X" => Move.Rock
+      case "Y" => Move.Paper
+      case "Z" => Move.Scissors
+    }
+
+    myMove.getScore + victoryPoints(oppMove, myMove)
+    
+
+  def victoryPoints(oppMove: Move, myMove: Move): Int =
+    (oppMove, myMove) match
+      case (x, y) if x == y => 3
+      case (Move.Rock, Move.Paper)      => 6
+      case (Move.Rock, Move.Scissors)   => 0
+      case (Move.Paper, Move.Scissors)  => 6
+      case (Move.Paper, Move.Rock)      => 0
+      case (Move.Scissors, Move.Rock)   => 6 
+      case (Move.Scissors, Move.Paper)  => 0
+    
+
 
   def solvePart1(input: Seq[Int]): Int =
     // solve the first part of the problem and return the result
