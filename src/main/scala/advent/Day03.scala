@@ -11,7 +11,8 @@ object Day03 {
       // parse the input data
       parsedInput = parseInput(input)
       // solve the first part of the problem
-      part1 = solvePart1(parsedInput) // solve the second part of the problem
+      part1 = solvePart1(parsedInput) 
+      // solve the second part of the problem
       part2 = solvePart2(parsedInput)
       // print the results to the console
     } yield s"$part1, $part2"
@@ -21,8 +22,6 @@ object Day03 {
     ZIO.fromTry(Try(scala.io.Source.fromFile(filename).mkString))
 
   def parseInput(input: String): Seq[String] =
-    // parse the input string and return a sequence of integers
-    // for day 2 this is the score for each round
     input
       .split("\n")
 
@@ -35,20 +34,16 @@ object Day03 {
       .sum
 
   def solvePart2(input: Seq[String]): Int =
-    // solve the second part of the problem and return the result
-    // input
-    //   .map(calcCorrectScore)
-    //   .sum
     input
       .sliding(3, 3)
       .map(findCommonChar)
+      .map(getPriority)
       .sum
 
   def toCompartments(line: String): Seq[String] =
     line.splitAt(line.length() / 2).toList
 
   def findCommonChar(containers: Seq[String]): Char =
-    print(containers)
     containers
       .head
       .filter( x => containers.forall(_.contains(x)) )
